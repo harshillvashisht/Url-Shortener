@@ -26,3 +26,71 @@
 - "Properties" shows metadata.
 - "Data" shows table rows.
 - Refresh the connection after migrations if new tables don't appear.
+
+# 2026-07-07
+
+## Authentication
+
+### JWT
+
+Learned how JWT authentication works end-to-end:
+
+- Generate token after successful authentication.
+- Include user identity inside the payload.
+- Send the token to the client.
+- Verify the token on protected routes.
+- Attach authenticated user information to the request.
+
+### Zod
+
+Used Zod for request validation.
+
+Instead of manually checking fields inside controllers, requests are validated before business logic executes.
+
+### DTOs
+
+Used Response DTOs to separate API responses from Prisma models.
+
+This prevents leaking internal fields such as passwordHash.
+
+### Layer Responsibilities
+
+Controller
+- HTTP concerns
+- Validation
+- Response formatting
+
+Service
+- Business logic
+
+Repository
+- Database access through Prisma
+
+Middleware
+- Authentication
+- Cross-cutting concerns
+
+### Password Storage
+
+Passwords are never stored directly.
+
+Instead:
+
+password
+→ bcrypt
+→ passwordHash
+→ database
+
+Only password hashes are persisted.
+
+### Runtime vs Compile-time Validation
+
+Encountered an issue where TypeScript accepted an object, but Prisma rejected it.
+
+Example:
+
+```ts
+{
+    ...userData,
+    passwordHash
+}
