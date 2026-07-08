@@ -87,14 +87,6 @@ Only password hashes are persisted.
 
 Encountered an issue where TypeScript accepted an object, but Prisma rejected it.
 
-Example:
-
-```ts
-{
-    ...userData,
-    passwordHash
-};
-
 # 2026-07-08
 
 Today's session was less about writing code and more about backend design decisions.
