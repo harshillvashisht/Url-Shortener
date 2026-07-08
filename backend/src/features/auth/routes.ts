@@ -4,8 +4,8 @@ import { authMiddleware } from '../../middleware/auth.middleware.js';
 
 const authrouter = Router();
 
-authrouter.post("/auth/register", register);
-authrouter.post("/auth/login", login);
-authrouter.get("/auth/me",authMiddleware, profile);
+authrouter.post("/register", register);
+authrouter.post("/login", login);
+authrouter.get("/me",authMiddleware, profile);
 
 export default authrouter;

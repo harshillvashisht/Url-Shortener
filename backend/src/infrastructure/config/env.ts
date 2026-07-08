@@ -11,6 +11,7 @@ const configSchema = z.object({
     REDIS_URL: z.string().url().optional(),
     JWT_EXPIRATION: z.string().default('1h'),
     BCRYPT_ROUNDS: z.coerce.number().default(10),
+    BASE_URL: z.string().url(),
 });
 
 const parsedConfig = configSchema.safeParse(process.env);

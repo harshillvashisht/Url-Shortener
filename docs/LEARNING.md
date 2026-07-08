@@ -93,4 +93,90 @@ Example:
 {
     ...userData,
     passwordHash
-}
+};
+
+# 2026-07-08
+
+Today's session was less about writing code and more about backend design decisions.
+
+## Key Learnings
+
+### Validation Layers
+
+I learned that validation can exist at different layers.
+
+* Zod validates request shape and syntax.
+* Services enforce business rules.
+
+For URLs:
+
+* Zod checks if the value is a valid URL.
+* The service decides whether only HTTP and HTTPS should be accepted.
+
+---
+
+### Database Constraints as a Safety Net
+
+Initially I thought checking whether a generated short code already existed would be enough.
+
+I learned that two requests can generate the same short code at nearly the same time, creating a race condition.
+
+The correct approach is to:
+
+* Let the database enforce uniqueness.
+* Retry only when a unique constraint violation occurs.
+
+---
+
+### TypeScript Type Predicates
+
+I learned about functions with return types like:
+
+`error is PrismaClientKnownRequestError`
+
+This doesn't change the runtime value—it teaches the TypeScript compiler how to narrow the type after runtime checks.
+
+This was one of the first TypeScript features that felt unfamiliar, but after breaking it down line by line I now understand the purpose of:
+
+* `unknown`
+* `instanceof`
+* Type predicates
+* Optional chaining
+* Checking Prisma error metadata
+
+I probably couldn't write this helper from memory yet, but I now understand the reasoning behind every part of it.
+
+---
+
+### Error Handling
+
+Not every error should be retried.
+
+Only expected and recoverable errors should trigger retries.
+
+Unexpected errors should immediately propagate upward.
+
+---
+
+### Project Architecture
+
+Today's implementation reinforced the separation of responsibilities:
+
+* Controller → HTTP concerns.
+* Service → Business logic.
+* Repository → Database operations.
+* DTO → Response formatting.
+* Shared helpers → Reusable infrastructure logic.
+
+Keeping each layer focused makes the code easier to extend later.
+
+## Looking Ahead
+
+The next feature will implement the redirect endpoint as a complete request pipeline rather than just making redirects work.
+
+That pipeline will introduce:
+
+* Redis cache-aside pattern.
+* Fire-and-forget analytics.
+* Browser redirects.
+* Request-derived analytics (IP, browser, operating system).
