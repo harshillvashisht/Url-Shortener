@@ -172,3 +172,153 @@ That pipeline will introduce:
 * Fire-and-forget analytics.
 * Browser redirects.
 * Request-derived analytics (IP, browser, operating system).
+
+# 2026-07-09
+
+## 1. Cache-Aside Pattern
+
+Redis is used as a cache in front of PostgreSQL.
+
+Flow:
+
+Read Redis
+    ↓
+Hit?
+ ├── Yes → Return
+ └── No
+        ↓
+    Read Database
+        ↓
+    Store in Redis
+        ↓
+    Return
+
+This is one of the most common caching strategies used in backend systems.
+
+---
+
+## 2. Cache Design Matters
+
+Initially only the original URL was cached.
+
+However, analytics requires the Link ID.
+
+Caching only the URL would force another database query.
+
+Instead, a minimal Link object is cached:
+
+- id
+- shortCode
+- originalUrl
+
+This allows both redirect and analytics to work entirely from Redis on cache hits.
+
+---
+
+## 3. HTTP Redirects
+
+Express provides:
+
+res.redirect(url)
+
+which returns a 302 Found response by default.
+
+Browsers automatically navigate to the URL in the Location header.
+
+---
+
+## 4. Fire-and-Forget Async Work
+
+Analytics should never delay a redirect.
+
+Instead of:
+
+await analyticsService.recordClick()
+
+the application intentionally starts analytics asynchronously after sending the redirect.
+
+Important:
+
+Fire-and-forget Promises should still have error handling using `.catch(...)` to avoid unhandled promise rejections.
+
+---
+
+## 5. User-Agent Parsing
+
+The browser sends a User-Agent header.
+
+Using ua-parser-js we can determine:
+
+- Browser
+- Operating System
+
+without relying on the frontend.
+
+---
+
+## 6. Feature Boundaries
+
+The Links feature owns the redirect flow.
+
+Analytics is treated as a separate feature.
+
+Flow:
+
+Links Controller
+    ↓
+Links Service
+    ↓
+Redirect
+    ↓
+Analytics Service
+    ↓
+Analytics Repository
+
+The Links feature never communicates directly with the Analytics repository.
+
+---
+
+## 7. Public Routes vs API Routes
+
+Not every endpoint belongs to the REST API.
+
+REST API:
+
+/api/v1/...
+
+Public redirect:
+
+/:shortCode
+
+Separating these routes keeps the application architecture cleaner.
+
+---
+
+## 8. Reverse Proxy Consideration (Important)
+
+Currently IP addresses are collected using Express.
+
+During local development this is sufficient.
+
+When deploying behind Nginx (or another reverse proxy), Express will otherwise see the proxy's IP instead of the client's real IP.
+
+Deployment reminder:
+
+- Enable Express proxy trust (e.g. `app.set('trust proxy', true)`).
+- Configure Nginx to forward the real client IP using the appropriate `X-Forwarded-For` headers.
+- Verify that `req.ip` reports the original client IP after deployment.
+
+This should be revisited during the Nginx deployment phase.
+
+---
+
+## Key Concepts Learned Today
+
+- Redis Cache-Aside pattern
+- Cache design decisions
+- HTTP 302 Redirects
+- Fire-and-forget asynchronous processing
+- User-Agent parsing
+- Public vs API routing
+- Feature boundaries
+- Reverse proxy IP forwarding considerations

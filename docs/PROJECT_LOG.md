@@ -172,3 +172,172 @@ Implement the public redirect endpoint (`GET /:shortCode`) as a complete vertica
 * Immediate redirect.
 * Fire-and-forget analytics collection without RabbitMQ.
 
+# Day 4 — Redirect, Redis Cache & Analytics
+
+## Goal
+
+Implement the public redirect endpoint and complete the first vertical slice of the URL Shortener.
+
+---
+
+## Features Completed
+
+### Public Redirect Endpoint
+
+Implemented the public endpoint:
+
+GET /:shortCode
+
+Unlike the API endpoints, this route is intended for browsers and is not versioned under `/api/v1`.
+
+Flow:
+
+Browser
+    ↓
+GET /:shortCode
+    ↓
+Controller
+    ↓
+Links Service
+    ↓
+Redirect (302)
+
+---
+
+### Redis Integration
+
+Added Redis as the application's cache layer.
+
+Implemented the Cache-Aside pattern:
+
+Request
+    ↓
+Redis
+    ↓
+Hit?
+ ├── Yes → Return cached link
+ └── No
+        ↓
+    PostgreSQL
+        ↓
+    Cache result
+        ↓
+    Return link
+
+Instead of caching only the original URL, Redis now stores a minimal Link object containing:
+
+- id
+- shortCode
+- originalUrl
+
+This allows analytics to work correctly even when the database is not queried.
+
+---
+
+### Analytics
+
+Implemented asynchronous click recording.
+
+After a successful redirect:
+
+Redirect User
+      ↓
+Fire Analytics (non-blocking)
+      ↓
+Analytics Service
+      ↓
+Analytics Repository
+      ↓
+PostgreSQL
+
+The redirect does not wait for analytics to finish.
+
+Collected information:
+
+- Link ID
+- Browser
+- Operating System
+- IP Address
+- Timestamp
+
+Country detection is intentionally postponed.
+
+---
+
+### User-Agent Parsing
+
+Integrated ua-parser-js.
+
+The Analytics Service extracts:
+
+- Browser
+- Operating System
+
+from the incoming User-Agent header.
+
+---
+
+### Public vs API Routing
+
+Separated public routes from REST API routes.
+
+Current routing:
+
+API
+POST /api/v1/links
+
+Public
+GET /:shortCode
+
+This keeps shortened URLs clean while preserving API versioning.
+
+---
+
+## Testing
+
+Verified:
+
+✓ Redirect works correctly.
+✓ Redis cache miss populates cache.
+✓ Redis cache hit bypasses PostgreSQL.
+✓ Analytics recorded on cache miss.
+✓ Analytics recorded on cache hit.
+✓ Invalid short code returns 404.
+✓ Browser successfully follows redirects.
+
+---
+
+## Current Project Status
+
+Authentication
+✅ Complete
+
+Create Link
+✅ Complete
+
+Redirect
+✅ Complete
+
+Redis Cache
+✅ Complete
+
+Basic Analytics
+✅ Complete
+
+Structured Logging (Pino)
+⬜ Next
+
+Analytics API
+⬜ Next
+
+Rate Limiting
+⬜ Later
+
+QR Code Generation
+⬜ Frontend phase
+
+Docker Deployment
+⬜ Later
+
+Nginx
+⬜ Later

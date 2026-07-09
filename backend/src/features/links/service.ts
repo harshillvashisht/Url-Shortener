@@ -2,6 +2,7 @@ import { AppError } from '../../shared/appError.js';
 import { nanoid } from 'nanoid';
 import linksRepository from './repository.js';
 import { isShortCodeConflict } from '../../shared/PrismaError.js';
+import { client } from '../../infrastructure/cache/redis.js';
 
 const MAX_RETRIES = 3;
 
@@ -43,4 +44,28 @@ const createLink = async (originalUrl: string, userId: string | undefined) => {
 
 }
 
-export default { createLink };
+const getLinkByShortCode = async (shortCode: string) => {
+
+    const cachedLink = await client.get(shortCode);
+
+    if (cachedLink) {
+        console.log("cache hit");
+        return JSON.parse(cachedLink);
+    }
+
+    const link = await linksRepository.findByShortCode(shortCode);
+
+    if (!link) {
+        throw new AppError('Link not found', 404);
+    }
+
+    await client.set(shortCode,  JSON.stringify({ id: link.id, shortCode: link.shortCode, originalUrl: link.originalUrl }), {
+        EX: 3600
+    });
+
+    return link;
+
+};
+
+
+export default { createLink, getLinkByShortCode };
