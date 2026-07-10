@@ -15,4 +15,26 @@ const findByShortCode = async (shortCode: string) => {
     return link;
 }
 
-export default { createLink , findByShortCode };
+const findLinksByUserId = async (userId: string, offset: number, limit: number) => {
+    const links = await prisma.link.findMany({
+        where: { userId },
+        skip: offset,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+    });
+
+    const totalItems = await prisma.link.count({
+        where: { userId },
+    });
+
+    return { links, totalItems };
+};
+
+const deleteLink = async (id: string, userId: string) => {
+    const deletedLink = await prisma.link.deleteMany({
+        where: { id, userId },
+    });
+    return deletedLink;
+};
+
+export default { createLink , findByShortCode, findLinksByUserId, deleteLink };

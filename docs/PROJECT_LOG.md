@@ -341,3 +341,84 @@ Docker Deployment
 
 Nginx
 ⬜ Later
+
+# Day 5 - Improve backend observability by introducing structured logging and implement the remaining link management APIs.
+
+## Completed
+
+### 1. Structured Logging
+
+- Created a centralized Pino logger configuration.
+- Integrated `pino-http` with the shared logger instance.
+- Added development-friendly pretty logging using `pino-pretty`.
+- Configured production to continue using structured JSON logs.
+- Added application/business logs using `req.log.info()`.
+- Removed the custom logging middleware since `pino-http` already provides automatic request logging.
+
+---
+
+### 2. GET `/links`
+
+Implemented the endpoint for retrieving a user's shortened links.
+
+Features:
+
+- Authentication required.
+- Pagination support.
+- Zod validation for query parameters.
+- Default values:
+  - `page = 1`
+  - `limit = 10`
+- Maximum limit validation.
+- Sorted by `createdAt DESC`.
+- Returns pagination metadata:
+  - current page
+  - limit
+  - total items
+  - total pages
+
+---
+
+### 3. DELETE `/links/:id`
+
+Implemented secure deletion of links.
+
+Features:
+
+- Authentication required.
+- Zod validation for route parameters.
+- Ownership enforced at the database query level.
+- Returns `204 No Content` on success.
+- Returns `404` if the link doesn't exist or doesn't belong to the authenticated user.
+- Added business logging for successful deletions.
+
+---
+
+## Testing Completed
+
+### Logging
+
+- ✅ Startup logs
+- ✅ Automatic request logging
+- ✅ Business event logging
+
+### GET /links
+
+- ✅ Default pagination
+- ✅ Custom pagination
+- ✅ Pagination metadata
+- ✅ Ordering
+- ✅ Zod validation
+
+### DELETE /links/:id
+
+- ✅ Successful deletion
+- ✅ Invalid ID validation
+- ✅ Non-existent resource handling
+- ✅ Business log generation
+
+---
+
+## Deferred
+
+Regression testing will be performed after completing the Analytics endpoint to avoid repeating the same end-to-end tests.

@@ -1,9 +1,11 @@
 import { Router } from 'express';
-import { createLink } from './controller.js';
+import { createLink, getlinks , deleteLink } from './controller.js';
 
 const apilinksroute = Router();
 
 apilinksroute.post('/links' , createLink);
+apilinksroute.get('/links' , getlinks);
+apilinksroute.delete('/links/:id', deleteLink);
 
 
 

@@ -1,12 +1,15 @@
 import { AppError } from '../shared/appError.js';
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
+import  logger  from '../infrastructure/logger/pino.js';
 
 export const errorMiddleware = (err: unknown, req: Request, res: Response, next: NextFunction) => {
 
     if( err instanceof AppError) {
         const statusCode = err.statusCode || 500;
         const message = err.message || 'Internal Server Error';
+
+        
 
         return res.status(statusCode).json({
             status: 'error',
@@ -25,7 +28,7 @@ export const errorMiddleware = (err: unknown, req: Request, res: Response, next:
         });
     }
     else {
-        console.error('Unexpected error:', err);
+        logger.error(err, 'Unhandled error occurred');
         return res.status(500).json({
             status: 'error',
             statusCode: 500,

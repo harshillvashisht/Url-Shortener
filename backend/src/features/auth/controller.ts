@@ -13,12 +13,15 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 
         const response = toAuthResponseDTO(user);
 
+        req.log.info( { userId: user.id } , 'User registered successfully');
+
         return res.status(201).json({
             status: 'success',
             message: 'User registered successfully',
             data: response,
             token,
         });
+
     }
     catch (error) {
         next(error);
@@ -33,6 +36,8 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         const { user, token } = await authService.login(data);
 
         const response = toAuthResponseDTO(user);
+
+        req.log.info( { userId: user.id } , 'User logged in successfully');
 
         return res.status(200).json({
             status: 'success',

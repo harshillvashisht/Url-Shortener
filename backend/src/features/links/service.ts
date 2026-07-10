@@ -68,4 +68,35 @@ const getLinkByShortCode = async (shortCode: string) => {
 };
 
 
-export default { createLink, getLinkByShortCode };
+const getLinks = async (userId: string, page: number, limit: number) => {
+
+    const offset = (page - 1) * limit;
+
+    const {links, totalItems } = await linksRepository.findLinksByUserId(userId, offset, limit);
+
+    const totalPages = Math.ceil(totalItems / limit);
+
+    return {
+        links,
+        pagination: {
+            totalItems,
+            page,
+            limit,
+            totalPages,
+        }
+    };
+
+};
+
+const deleteLink = async (id: string, userId: string) => {
+
+    const deletedLink = await linksRepository.deleteLink(id, userId);
+
+    if (deletedLink.count === 0) {
+        throw new AppError('Link not found or not authorized to delete', 404);
+    }
+
+
+}
+
+export default { createLink, getLinkByShortCode, getLinks, deleteLink };

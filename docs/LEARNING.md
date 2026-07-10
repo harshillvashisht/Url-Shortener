@@ -310,8 +310,6 @@ Deployment reminder:
 
 This should be revisited during the Nginx deployment phase.
 
----
-
 ## Key Concepts Learned Today
 
 - Redis Cache-Aside pattern
@@ -322,3 +320,80 @@ This should be revisited during the Nginx deployment phase.
 - Public vs API routing
 - Feature boundaries
 - Reverse proxy IP forwarding considerations
+
+# 2026-07-10
+
+## Logging
+
+### Pino
+
+- Learned the difference between application logs and automatic HTTP request logs.
+- Configured a shared Pino logger used throughout the application.
+- Integrated `pino-http` with the shared logger instance.
+- Learned why development uses `pino-pretty` while production keeps structured JSON logs.
+
+### Business Logging
+
+Used `req.log.info()` for meaningful events instead of logging every controller action.
+
+Examples:
+
+- User login
+- Link retrieval
+- Link deletion
+
+---
+
+## Pagination
+
+Learned how pagination is implemented using Prisma.
+
+Components:
+
+- `skip`
+- `take`
+- `count`
+
+Pagination metadata includes:
+
+- current page
+- limit
+- total items
+- total pages
+
+Also learned why pagination should always use deterministic ordering.
+
+---
+
+## Validation
+
+Used Zod to validate query parameters.
+
+Learned about:
+
+- `z.coerce.number()`
+- default values
+- numeric constraints
+- centralized validation
+
+---
+
+## Prisma
+
+Learned:
+
+- Difference between `delete()` and `deleteMany()`.
+- Why ownership checks can be enforced directly in the database query.
+- Why counting records requires a separate query.
+
+---
+
+## API Design
+
+Implemented RESTful deletion using:
+
+- `204 No Content`
+- ownership authorization
+- pagination metadata
+
+Also understood why requesting a page beyond the available data should return an empty array instead of an error.
