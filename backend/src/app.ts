@@ -6,6 +6,7 @@ import { authMiddleware } from './middleware/auth.middleware.js';
 import redirectRouter from './features/links/redirect.routes.js';
 import  { pinoHttp } from 'pino-http';
 import logger from './infrastructure/logger/pino.js';
+import analyticsRouter from './features/analytics/routes.js';
 
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(pinoHttp({logger}));
 app.use("/api/v1/auth", authrouter);
 app.use("/api/v1/", authMiddleware, linksRouter);
 app.use("/" , redirectRouter);
+app.use("/api/v1/analytics", authMiddleware, analyticsRouter);
 
 
 app.use(errorMiddleware);

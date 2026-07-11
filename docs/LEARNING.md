@@ -397,3 +397,90 @@ Implemented RESTful deletion using:
 - pagination metadata
 
 Also understood why requesting a page beyond the available data should return an empty array instead of an error.
+
+# 2026-07-11
+
+## 1. DTOs Should Represent the Public API
+
+Initially, the Analytics DTO simply returned the Prisma model without modification, making it effectively unnecessary.
+
+After reviewing the response, the DTO was updated to transform database models into API-specific objects by removing internal fields (`id`, `linkId`) while exposing only the fields required by the client.
+
+This reinforced that DTOs are responsible for defining the API contract rather than mirroring database models.
+
+---
+
+## 2. Validation Must Match the Data Model
+
+A bug occurred because the analytics route validated the ID using `z.string().uuid()` while the project uses Prisma's `cuid()` identifiers.
+
+Although the request contained a valid link ID, validation failed before reaching the service layer.
+
+Lesson:
+Validation rules should always reflect the actual identifier strategy used throughout the project.
+
+---
+
+## 3. Database Aggregation Over Application Logic
+
+Analytics was implemented using Prisma's aggregation methods instead of loading click records into memory.
+
+The database performs:
+
+* Total click count
+* Today's click count
+* Latest click retrieval
+* Recent click retrieval
+
+This keeps the application lightweight and lets the database perform the operations it is optimized for.
+
+---
+
+## 4. Prisma Transactions for Independent Queries
+
+Multiple independent analytics queries were grouped inside a Prisma `$transaction()`.
+
+Benefits:
+
+* Cleaner code.
+* Single database round trip.
+* Related analytics values are retrieved together.
+
+---
+
+## 5. Separation of Responsibilities
+
+The Analytics module followed the same architecture as the rest of the project:
+
+* Controller
+
+  * Validation
+  * Authentication checks
+  * Response handling
+
+* Service
+
+  * Ownership verification
+  * Business rules
+
+* Repository
+
+  * Prisma queries only
+
+This consistency makes future features easier to implement and maintain.
+
+---
+
+## 6. API Design
+
+Internal database identifiers are implementation details and should not be exposed unless clients genuinely need them.
+
+Returning only meaningful fields results in a cleaner, more stable API that remains independent of future database implementation changes.
+
+---
+
+## 7. Code Review Observations
+
+* Avoid validation that duplicates guarantees already provided at the controller boundary.
+* Repository methods should be named according to what they actually query (e.g., querying by a primary key should reflect that in the method name).
+* Optimize only after identifying an actual performance bottleneck; readability and maintainability are more valuable for this stage of the project.

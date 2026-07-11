@@ -422,3 +422,64 @@ Features:
 ## Deferred
 
 Regression testing will be performed after completing the Analytics endpoint to avoid repeating the same end-to-end tests.
+
+# Day 6 -Implemented the Analytics module for the URL Shortener backend.
+
+* Added a dedicated Analytics Controller, Service, Repository, Validation, DTO, Types, and Router.
+* Exposed a protected endpoint:
+
+  * `GET /api/v1/analytics/:id`
+* Secured the endpoint using the existing authentication middleware.
+
+## Analytics Functionality
+
+* Returns:
+
+  * Total clicks
+  * Today's clicks
+  * Last clicked event
+  * Recent click history
+* Ownership verification ensures users can only access analytics for their own links.
+* Uses Prisma `$transaction()` to efficiently retrieve:
+
+  * Total click count
+  * Today's click count
+  * Last click
+  * Recent 10 click events
+
+## API Improvements
+
+* Introduced a proper Analytics DTO.
+* Removed internal database fields (`id`, `linkId`) from API responses.
+* Exposed only client-relevant fields:
+
+  * `createdAt`
+  * `browser`
+  * `os`
+  * `ipAddress`
+
+## Bug Fixed
+
+* Analytics endpoint initially failed with:
+
+  * `"Invalid uuid"`
+* Root cause:
+
+  * Validation expected UUIDs while the project uses Prisma `cuid()` IDs.
+* Updated the validation schema to match the project's identifier format.
+
+## Testing
+
+* Verified authenticated access.
+* Verified analytics retrieval.
+* Verified DTO transformation.
+* Verified click ordering (latest first).
+* Verified recent click limiting.
+* Verified validation after fixing the CUID issue.
+
+## Architecture
+
+* Maintained the Controller → Service → Repository architecture.
+* Validation remains at the controller boundary.
+* Business logic remains inside the service.
+* Repository is responsible only for database access.

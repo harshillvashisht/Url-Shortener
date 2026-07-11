@@ -28,5 +28,26 @@ const recordClick = async (data: RecordClickInput) => {
 
 };
 
-export default { recordClick };
+const getAnalytics = async (linkId: string, userId: string) => {
+
+    const link = await analyticsRepository.findById(linkId);
+
+    if(!link) {
+        throw new AppError('Link not found', 404);
+    }
+
+    if(link.userId !== userId) {
+        throw new AppError('Unauthorized access to analytics data', 403);
+    }
+
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const analyticsData = await analyticsRepository.findAnalytics(linkId, startOfToday);
+
+    return analyticsData;
+
+}
+
+export default { recordClick, getAnalytics };
 
