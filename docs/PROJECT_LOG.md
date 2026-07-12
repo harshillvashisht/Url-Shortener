@@ -483,3 +483,156 @@ Regression testing will be performed after completing the Analytics endpoint to 
 * Validation remains at the controller boundary.
 * Business logic remains inside the service.
 * Repository is responsible only for database access.
+
+# Day 7 - Implement a production-style Redis-backed rate limiter instead of relying on an external Express middleware.
+
+## Features Implemented
+
+### Redis Token Bucket Rate Limiter
+
+Implemented a custom Token Bucket rate limiter using Redis and Lua scripts.
+
+### Token Bucket Class
+
+Created a reusable `TokenBucket` class responsible for:
+
+- Loading Lua scripts into Redis using `SCRIPT LOAD`
+- Executing cached scripts using `EVALSHA`
+- Falling back to `EVAL` if the script is unavailable
+- Managing token bucket configuration
+- Returning whether a request is allowed and the remaining tokens
+
+### Lua Script
+
+Implemented the complete Token Bucket algorithm inside a Lua script.
+
+Responsibilities:
+
+- Read bucket state from Redis
+- Initialize bucket on first request
+- Calculate elapsed time
+- Refill tokens based on elapsed time
+- Consume one token if available
+- Store updated state back into Redis
+- Set TTL to automatically clean inactive buckets
+- Return remaining tokens and allow/deny status
+
+### Express Middleware
+
+Created a reusable rate-limiting middleware that:
+
+- Uses the client's IP address as the rate-limit key
+- Calls the Token Bucket
+- Returns HTTP **429 Too Many Requests** when the bucket is empty
+- Sends `X-RateLimit-Remaining` response header
+- Logs blocked requests
+- Handles Redis failures gracefully
+
+---
+
+## Project Structure
+
+```
+src/
+├── infrastructure/
+│   └── cache/
+│       ├── redis.ts
+│       └── tokenBucket.ts
+│
+├── middleware/
+│   └── rateLimit.middleware.ts
+```
+
+---
+
+## Testing
+
+Created a temporary testing endpoint:
+
+```
+GET /test-rate-limit
+```
+
+Validated using **Postman Runner**.
+
+Configuration used during testing:
+
+- Capacity: 10
+- Refill Rate: 1
+- Refill Interval: 1 second
+
+Results:
+
+- First 10 requests returned **200 OK**
+- Subsequent requests correctly returned **429 Too Many Requests**
+
+The implementation behaved exactly as expected.
+
+---
+
+## Important Debugging Lesson
+
+Initially, the rate limiter appeared to be broken because every manual request showed:
+
+```
+X-RateLimit-Remaining: 9
+```
+
+The implementation was actually correct.
+
+Since requests were being made approximately one second apart and the bucket refilled one token every second, each consumed token was replenished before the next request arrived.
+
+Using Postman Runner to send requests rapidly confirmed that the rate limiter behaved correctly and exhausted the bucket as expected.
+
+---
+
+## Architectural Decisions
+
+- Implemented a custom Redis Token Bucket instead of using `express-rate-limit`.
+- Used Lua scripting to ensure atomic Redis operations.
+- Used Redis Hashes (`HSET` / `HMGET`) to store bucket state.
+- Added Redis key namespacing (`rate-limit:<key>`).
+- Added automatic TTL cleanup for inactive buckets.
+- Kept a single global limiter for Version 1.
+- Route-specific limiters may be introduced in a future version if needed.
+
+---
+
+## Current Backend Status
+
+### Completed
+
+- Authentication
+- Link creation
+- Redirect service
+- Analytics
+- Pagination
+- Delete links
+- Configuration management
+- Logging (Pino)
+- Error handling
+- Redis integration
+- Custom Redis Token Bucket Rate Limiter
+
+### Remaining Backend Work
+
+- Complete regression testing of all endpoints
+
+After successful regression testing, Backend V1 will be considered complete.
+
+---
+
+## Next Phase
+
+Begin frontend planning.
+
+Topics to discuss:
+
+- Folder structure
+- Routing
+- Authentication flow
+- API layer
+- State management
+- Component hierarchy
+- UI design
+- Deployment strategy

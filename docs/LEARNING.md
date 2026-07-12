@@ -484,3 +484,38 @@ Returning only meaningful fields results in a cleaner, more stable API that rema
 * Avoid validation that duplicates guarantees already provided at the controller boundary.
 * Repository methods should be named according to what they actually query (e.g., querying by a primary key should reflect that in the method name).
 * Optimize only after identifying an actual performance bottleneck; readability and maintainability are more valuable for this stage of the project.
+
+
+# 2026-07-12
+
+## Topic
+Redis Token Bucket Rate Limiter using Lua
+
+## What I learned
+
+- Understood different rate limiting algorithms and chose Token Bucket.
+- Learned why Redis is preferred for distributed rate limiting.
+- Learned why Lua scripts are required for atomic operations inside Redis.
+- Understood the race condition that occurs when GET and SET are executed separately.
+- Learned how EVAL and EVALSHA execute Lua scripts.
+- Understood why SCRIPT LOAD returns a SHA hash.
+- Learned the difference between EVAL (sends the entire script) and EVALSHA (uses cached script).
+- Implemented a reusable TokenBucket class in TypeScript.
+- Stored bucket state using Redis hashes (HSET/HMGET).
+- Added automatic key expiration to clean up inactive buckets.
+- Implemented an Express rate-limiting middleware.
+- Added X-RateLimit-Remaining response headers.
+- Tested the implementation using Postman Runner.
+- Learned that refill configuration significantly affects observed behaviour during manual testing.
+
+## Interesting observations
+
+Initially it appeared that the rate limiter was not working because every request showed 9 remaining tokens.
+
+The actual reason was that requests were being made approximately one second apart while the bucket refilled one token every second. The bucket was therefore replenished before the next request arrived.
+
+Using Postman Runner to send many requests rapidly confirmed that the implementation correctly returned HTTP 429 after the bucket capacity was exhausted.
+
+## Key takeaway
+
+Implementing the algorithm from scratch provided a much deeper understanding of Redis scripting, atomicity, and distributed rate limiting than simply using an npm middleware.
