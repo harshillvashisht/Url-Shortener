@@ -15,12 +15,20 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 
         req.log.info( { userId: user.id } , 'User registered successfully');
 
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            maxAge: 1000 * 60 * 60 * 24 * 7,
+        });
+
         return res.status(201).json({
             status: 'success',
             message: 'User registered successfully',
             data: response,
-            token,
         });
+
+
 
     }
     catch (error) {
@@ -38,6 +46,13 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         const response = toAuthResponseDTO(user);
 
         req.log.info( { userId: user.id } , 'User logged in successfully');
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            maxAge: 1000 * 60 * 60 * 24 * 7,
+        });
 
         return res.status(200).json({
             status: 'success',
@@ -74,4 +89,20 @@ export const profile = async (req: AuthenticatedRequest, res: Response, next: Ne
     }
 };
 
-     
+export const logout = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        });
+
+        return res.status(200).json({
+            status: 'success',
+            message: 'User logged out successfully'
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+};

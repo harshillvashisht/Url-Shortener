@@ -8,10 +8,12 @@ import  { pinoHttp } from 'pino-http';
 import logger from './infrastructure/logger/pino.js';
 import analyticsRouter from './features/analytics/routes.js';
 import rateLimitMiddleware from './middleware/ratelimit.middleware.js';
+import cookieParser from "cookie-parser";
 
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 app.use(pinoHttp({logger}));
 app.use(rateLimitMiddleware);
 
