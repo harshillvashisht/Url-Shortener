@@ -9,10 +9,17 @@ import logger from './infrastructure/logger/pino.js';
 import analyticsRouter from './features/analytics/routes.js';
 import rateLimitMiddleware from './middleware/ratelimit.middleware.js';
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 
 const app = express();
 app.use(express.json());
+
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }));
+  
 app.use(cookieParser());
 app.use(pinoHttp({logger}));
 app.use(rateLimitMiddleware);

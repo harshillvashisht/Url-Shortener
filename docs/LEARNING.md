@@ -519,3 +519,103 @@ Using Postman Runner to send many requests rapidly confirmed that the implementa
 ## Key takeaway
 
 Implementing the algorithm from scratch provided a much deeper understanding of Redis scripting, atomicity, and distributed rate limiting than simply using an npm middleware.
+
+# 2026-07-15
+
+## Things I Learned
+
+### 1. React Context
+
+Context is not just another place to store data.
+
+Its purpose is to provide shared application state without prop drilling.
+
+For authentication, Context becomes the single source of truth for the current user.
+
+---
+
+### 2. Authentication has three states
+
+Instead of thinking:
+
+- Logged In
+- Logged Out
+
+The application actually has:
+
+- Initializing
+- Authenticated
+- Unauthenticated
+
+The initializing state exists because the frontend has not yet asked the backend whether the user has a valid session.
+
+---
+
+### 3. Why `/auth/me` exists
+
+Refreshing the browser destroys all React state.
+
+The authentication cookie still exists inside the browser.
+
+Calling `/auth/me` allows React to reconstruct its authentication state using that cookie.
+
+---
+
+### 4. Protected vs Public Routes
+
+ProtectedRoute protects authenticated pages.
+
+PublicRoute prevents authenticated users from returning to authentication pages.
+
+Routing decisions are based on authentication state rather than manually navigating everywhere.
+
+---
+
+### 5. Layered Frontend Architecture
+
+Authentication now follows multiple layers instead of placing everything inside a page.
+
+Page
+→ Hook
+→ Context
+→ API Layer
+→ Axios
+→ Backend
+
+Each layer has a single responsibility.
+
+---
+
+### 6. Error Classification
+
+Not every failed request is an application error.
+
+A 401 response from `/auth/me` is expected when no user is logged in.
+
+Unexpected failures (network issues, server errors) should be handled differently.
+
+---
+
+### Architecture Reflection
+
+This was the first frontend feature built using a layered architecture similar to the backend.
+
+Instead of pages directly making HTTP requests, responsibilities were separated into:
+
+Page
+→ Hook
+→ Context
+→ API Layer
+→ Axios
+→ Backend
+
+This separation keeps components focused on rendering while networking and authentication logic remain centralized and reusable.
+
+A key takeaway from this session was understanding why global state is necessary for authentication and how React Context eliminates prop drilling by providing a single source of truth for the authenticated user.
+
+### Overall Reflection
+
+This was the first frontend feature where the architecture started feeling similar to backend architecture.
+
+Instead of directly calling APIs from components, responsibilities are separated into different layers, making the codebase easier to understand and extend.
+

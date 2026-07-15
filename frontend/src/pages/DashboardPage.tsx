@@ -1,3 +1,14 @@
+import useAuth from "../hooks/useAuth";
+
 export default function DashboardPage() {
-  return <main className="p-6">Dashboard page placeholder</main>;
+    const { user, isInitializing } = useAuth();
+
+console.log({
+    user,
+    isInitializing,
+});
+
+    return (
+        <h1>Dashboard</h1>
+    );
 }
