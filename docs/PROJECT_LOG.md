@@ -690,3 +690,160 @@ Logout
 - Added temporary loading state while authentication initializes.
 - Improved error handling for `/auth/me`.
 - Removed temporary debugging logs.
+
+# Day 9 - Completed the core dashboard functionality after authentication.
+
+The dashboard now supports:
+
+- Creating short links
+- Listing user links
+- Deleting links
+- Copying shortened URLs
+- Client-side pagination
+- Navigation to analytics page for individual links
+
+The frontend architecture established during authentication was reused successfully without major changes.
+
+---
+
+## Features Implemented
+
+### useLinks Hook
+
+Created a dedicated `useLinks` custom hook responsible for:
+
+- Fetching paginated links
+- Creating new links
+- Deleting existing links
+- Managing loading state
+- Managing pagination state
+
+The hook owns all link-related state and business logic.
+
+---
+
+### CreateLinkForm
+
+Implemented a reusable form component for creating new links.
+
+Responsibilities:
+
+- Maintain input state
+- Submit URL
+- Reset input after successful creation
+
+---
+
+### LinkCard
+
+Implemented a reusable card for displaying an individual shortened link.
+
+Features:
+
+- Copy shortened URL
+- Navigate to analytics page
+- Delete link
+
+Local UI state:
+
+- Temporary "Copied!" feedback
+
+---
+
+### LinkList
+
+Implemented a presentational component responsible for displaying:
+
+- Loading spinner
+- Empty state
+- List of LinkCards
+
+Business logic remains inside `useLinks`.
+
+---
+
+### Pagination
+
+Implemented reusable pagination component.
+
+Responsibilities:
+
+- Previous page
+- Next page
+- Notify parent when page changes
+
+Pagination does **not** perform API requests.
+
+It only updates page state.
+
+---
+
+### DashboardPage
+
+Acts as the orchestrator.
+
+Responsibilities:
+
+- Own current page state
+- Connect `useLinks`
+- Compose child components
+
+No networking logic exists inside the page.
+
+---
+
+### Configuration
+
+Introduced central configuration file.
+
+Added environment variables for:
+
+- API Base URL
+- Short URL Base
+
+Removed hardcoded URLs from the application.
+
+---
+
+## Testing
+
+Verified:
+
+- Create link
+- Delete link
+- Copy shortened URL
+- Dashboard refresh
+- Analytics navigation
+- Session persistence
+
+Pagination architecture implemented.
+Multi-page testing pending.
+
+---
+
+## Current Project Status
+
+Authentication ✅
+
+Dashboard ✅
+
+Remaining:
+
+- Analytics Page
+- UI Polish
+- Toast notifications
+- Better spinner
+- Better empty state
+
+## Next Milestone
+
+Analytics Feature
+
+Implementation order:
+
+1. Create useAnalytics hook
+2. Build AnalyticsPage
+3. Create AnalyticsCard
+4. Fetch analytics by link ID
+5. Display analytics information
+6. Handle loading and empty/error states

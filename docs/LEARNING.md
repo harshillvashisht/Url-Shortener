@@ -619,3 +619,159 @@ This was the first frontend feature where the architecture started feeling simil
 
 Instead of directly calling APIs from components, responsibilities are separated into different layers, making the codebase easier to understand and extend.
 
+# 2026-07-16
+
+## React Component Responsibilities
+
+Today's work reinforced that every component should have a single responsibility.
+
+Examples:
+
+- CreateLinkForm → creating links
+- LinkCard → displaying one link
+- LinkList → displaying collections
+- Pagination → changing pages
+- Dashboard → orchestrating components
+
+---
+
+## State Ownership
+
+Not every state belongs in the page.
+
+Current ownership:
+
+Dashboard
+
+- Current page number
+
+useLinks
+
+- Links
+- Pagination data
+- Loading
+- CRUD operations
+
+LinkCard
+
+- Copy button feedback
+
+Keeping state close to where it is needed simplifies components.
+
+---
+
+## Custom Hooks
+
+A custom hook is not just a wrapper around API calls.
+
+It represents a feature.
+
+`useLinks` encapsulates the entire "Links" domain.
+
+Components consume the hook without knowing implementation details.
+
+---
+
+## Separation of Concerns
+
+Architecture followed:
+
+Page
+
+↓
+
+Custom Hook
+
+↓
+
+API Layer
+
+↓
+
+Axios
+
+↓
+
+Backend
+
+Components never communicate directly with axios.
+
+---
+
+## UI vs Business Logic
+
+Business logic remains inside hooks.
+
+Components focus on rendering and user interaction.
+
+This separation made the dashboard easy to compose.
+
+---
+
+## Pagination Flow
+
+Changing page does not fetch data directly.
+
+Flow:
+
+Pagination
+
+↓
+
+Dashboard updates page state
+
+↓
+
+useLinks receives new page
+
+↓
+
+useEffect runs
+
+↓
+
+fetchLinks()
+
+↓
+
+Links update
+
+↓
+
+UI re-renders
+
+---
+
+## Environment Configuration
+
+Instead of hardcoding URLs, environment variables should be used.
+
+Configuration is centralized inside a single config module.
+
+This makes deployment easier without changing source code.
+
+---
+
+# Decisions Made
+
+- Dashboard owns only UI state (current page).
+- useLinks owns all link-related business logic.
+- Pagination updates page state only.
+- Pagination never performs API requests.
+- LinkList owns loading and empty state rendering.
+- LinkCard owns only local UI state ("Copied!").
+- Backend returns shortCode, not shortUrl.
+- Frontend constructs shortUrl using environment configuration.
+- Environment values centralized inside config.ts.
+- Analytics will display one selected link rather than choosing from a dropdown.
+- Dashboard is for link management; Analytics page is for insights only.
+
+---
+
+## Overall Reflection
+
+This session required significantly less architectural guidance compared to the authentication phase.
+
+The architecture established earlier proved reusable.
+
+The focus shifted from learning React fundamentals to applying architectural decisions consistently.
