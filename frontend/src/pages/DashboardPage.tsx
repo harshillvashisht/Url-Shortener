@@ -3,6 +3,7 @@ import useLinks from "../hooks/useLinks";
 import CreateLinkForm from "../components/links/CreateLinkForm";
 import LinkList from "../components/links/LinkList";
 import Pagination from "../components/links/Pagination";
+import Navbar from "../components/common/Navbar";
 
 export default function DashboardPage() {
 
@@ -12,6 +13,8 @@ export default function DashboardPage() {
 
 
     return (
+        <>
+        <Navbar />
         <div className="dashboard-page">
             <CreateLinkForm createLink={createLink} isLoading={isLoading} />
             <LinkList
@@ -27,6 +30,6 @@ export default function DashboardPage() {
                 />
             )}
         </div>
-
+    </>
     );
 }

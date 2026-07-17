@@ -19,7 +19,11 @@ export default function App() {
               <DashboardPage />
             </ProtectedRoute>
           } />
-        <Route path="/analytics/:id" element={<AnalyticsPage />} />
+        <Route path="/analytics/:id" element={
+          <ProtectedRoute>
+            <AnalyticsPage />
+          </ProtectedRoute>
+          } />
       </Routes>
     </BrowserRouter>
   );

@@ -752,7 +752,7 @@ This makes deployment easier without changing source code.
 
 ---
 
-# Decisions Made
+## Decisions Made
 
 - Dashboard owns only UI state (current page).
 - useLinks owns all link-related business logic.
@@ -775,3 +775,95 @@ This session required significantly less architectural guidance compared to the 
 The architecture established earlier proved reusable.
 
 The focus shifted from learning React fundamentals to applying architectural decisions consistently.
+
+# 2026-07-17
+
+## React Architecture
+
+Continued reinforcing the separation of responsibilities across the frontend.
+
+Current flow:
+
+Page
+↓
+Custom Hook
+↓
+API Layer
+↓
+Axios
+↓
+Backend
+
+Pages orchestrate features.
+
+Custom hooks own business logic and state.
+
+Components remain focused on presentation.
+
+---
+
+## Component Responsibility
+
+Learned that not every repeated UI element requires another abstraction.
+
+For the analytics feature:
+
+AnalyticsPage
+
+- Owns page composition
+- Displays summary information
+
+AnalyticsCard
+
+- Displays recent click activity
+
+Creating additional components such as AnalyticsList or AnalyticsItem would have added unnecessary complexity without improving readability.
+
+---
+
+## Architecture Tradeoffs
+
+Considered introducing an AppLayout after adding multiple authenticated pages.
+
+Decided against a late architectural refactor because:
+
+- Existing structure is stable.
+- Refactor would touch routing and page composition.
+- The only missing functionality was access to logout.
+
+Instead, implemented a shared Navbar component to solve the problem with minimal risk.
+
+This reinforced that architectural improvements should be balanced against project stability, especially near completion.
+
+---
+
+## Feature Scope
+
+Initially considered browser statistics, OS statistics and charts.
+
+Decided to keep analytics focused on:
+
+- Total clicks
+- Today's clicks
+- Last clicked
+- Recent clicks
+
+More advanced analytics can be introduced later without changing the current architecture.
+
+This reinforced the importance of avoiding premature optimization and unnecessary feature creep.
+
+---
+
+## Project Observation
+
+With frontend functionality complete, the remaining work shifts from software development to product refinement.
+
+The remaining phases are:
+
+- UI polish
+- Testing
+- Edge case fixes
+- Documentation
+- Deployment
+
+This reflects the typical progression of a real software project where implementation is followed by stabilization and release preparation.
