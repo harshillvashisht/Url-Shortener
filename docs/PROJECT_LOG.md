@@ -919,3 +919,30 @@ Implemented features include:
 - Protected routes
 
 Remaining work is focused on polish rather than adding new functionality.
+
+# Day 11 - Frontend UI Polish
+
+Completed the visual polish phase of the URL Shortener frontend.
+
+Changes:
+- Redesigned dashboard layout with improved visual hierarchy.
+- Improved analytics page presentation.
+- Refined login/register page.
+- Enhanced shared components (Button, Input, Navbar, LinkCard, Pagination, EmptyState, Spinner).
+- Improved spacing, typography, and card layout.
+- Added responsive styling.
+- Truncated long URLs for cleaner cards.
+- Redesigned pagination controls.
+
+Testing:
+- Verified authentication flow.
+- Tested create/delete/copy/analytics flows.
+- Tested pagination.
+- Fixed edge case where deleting the last item on the final page left the user on an invalid page.
+
+### Decisions
+
+- Kept existing architecture unchanged.
+- No routing, hook, API, or business logic refactoring.
+- Used AI only for presentation improvements under strict constraints.
+- Avoided adding new UI dependencies.
