@@ -23,17 +23,28 @@ export default function CreateLinkForm({ createLink, isLoading }: CreateLinkForm
 
 
     return (
-        <form onSubmit={handleSubmit}>
-            <Input 
-                type="text"
-                placeholder="Enter original URL"
-                value={originalUrl}
-                onChange={(e) => setOriginalUrl(e.target.value)}
-                required
-            />
-            <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Creating..." : "Create Link"}
-            </Button>
+        <form onSubmit={handleSubmit} className="rounded-3xl border border-slate-200 bg-slate-50/60 p-4 shadow-sm sm:p-5 lg:p-6">
+            <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+                <div className="space-y-2">
+                    <label className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                        Original URL
+                    </label>
+                    <Input 
+                        type="text"
+                        placeholder="Paste a long URL to shorten"
+                        value={originalUrl}
+                        onChange={(e) => setOriginalUrl(e.target.value)}
+                        required
+                    />
+                </div>
+                <Button
+                    type="submit"
+                    disabled={isLoading}
+                    className="sm:!w-auto sm:min-w-36 sm:px-6"
+                >
+                    {isLoading ? "Creating..." : "Create Link"}
+                </Button>
+            </div>
         </form>
     );
             

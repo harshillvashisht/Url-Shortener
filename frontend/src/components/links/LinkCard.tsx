@@ -35,13 +35,49 @@ const LinkCard = ({ link, deleteLink }: LinkCardProps) => {
         
 
     return (
-        <div className="link-card">
-            <p>Original URL: {link.originalUrl}</p>
-            <p>Short Code: {link.shortCode}</p>
-            <p>Short URL: {shortUrl}</p>
-            <Button onClick={handleCopy} >{isCopied ? "Copied!" : "Copy"}</Button>
-            <Button onClick={handleAnalytics}>Analytics</Button>
-            <Button onClick={handleDelete}>Delete</Button>
+        <div className="link-card group rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lg sm:p-6">
+            <div className="grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.95fr)] lg:items-start">
+                <div className="space-y-3">
+                    <div className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                        Original URL
+                    </div>
+                    <p className="truncate text-sm leading-6 text-slate-800 sm:text-[0.95rem]" title={link.originalUrl}>
+                        {link.originalUrl}
+                    </p>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2 lg:gap-4">
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                            Short Code
+                        </p>
+                        <p className="mt-1 font-mono text-sm font-medium text-slate-800">
+                            {link.shortCode}
+                        </p>
+                    </div>
+
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                            Short URL
+                        </p>
+                        <p className="mt-1 truncate font-mono text-sm font-medium text-slate-800" title={shortUrl}>
+                            {shortUrl}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="mt-5 flex flex-col gap-2 border-t border-slate-200 pt-4 sm:flex-row sm:flex-wrap sm:justify-end">
+                <Button className="w-auto! sm:min-w-24" onClick={handleCopy}>
+                    {isCopied ? "Copied!" : "Copy"}
+                </Button>
+                <Button className="w-auto! sm:min-w-24" onClick={handleAnalytics}>
+                    Analytics
+                </Button>
+                <Button className="w-auto! sm:min-w-24" onClick={handleDelete}>
+                    Delete
+                </Button>
+            </div>
         </div>
     );
 }

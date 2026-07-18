@@ -41,16 +41,24 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10 text-slate-900 sm:px-6 lg:px-8">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg"
+        className="w-full max-w-lg rounded-3xl border border-slate-200 bg-white px-6 py-8 shadow-sm sm:px-8 sm:py-10"
       >
-        <h1 className="mb-6 text-center text-3xl font-bold">
-          {isLogin ? "Login" : "Register"}
-        </h1>
+        <div className="text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
+            URL Shortener
+          </p>
+          <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+            {isLogin ? "Login" : "Register"}
+          </h1>
+          <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-slate-500 sm:text-base">
+            Access your workspace to create, manage, and analyze short links in one place.
+          </p>
+        </div>
 
-        <div className="space-y-4">
+        <div className="mt-8 space-y-4 sm:space-y-5">
           <Input
             type="email"
             placeholder="Email"
@@ -76,14 +84,14 @@ export default function AuthPage() {
           </Button>
         </div>
 
-        <p className="mt-6 text-center">
+        <p className="mt-6 text-center text-sm text-slate-600">
           {isLogin
             ? "Don't have an account?"
             : "Already have an account?"}
 
           <button
             type="button"
-            className="ml-2 text-blue-600"
+            className="ml-2 font-medium text-blue-600 transition-colors hover:text-blue-700"
             onClick={() => setIsLogin((prev) => !prev)}
           >
             {isLogin ? "Register" : "Login"}
