@@ -1,10 +1,10 @@
 import { createClient } from 'redis';
 import { TokenBucket } from './tokenbucket.js';
 import logger from '../logger/pino.js';
-import { env } from '../config/env.js';
+import { config } from '../config/index.js';
 
 export const client = createClient({
-     url: env.REDIS_URL,
+     url: config.redis.url,
 });
 
 export const limiter = new TokenBucket({

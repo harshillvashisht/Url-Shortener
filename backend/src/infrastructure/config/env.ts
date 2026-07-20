@@ -12,6 +12,7 @@ const configSchema = z.object({
     JWT_EXPIRATION: z.string().default('1h'),
     BCRYPT_ROUNDS: z.coerce.number().default(10),
     BASE_URL: z.string().url(),
+    FRONTEND_URL: z.string().url(),
 });
 
 const parsedConfig = configSchema.safeParse(process.env);

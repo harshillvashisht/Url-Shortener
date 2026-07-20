@@ -10,15 +10,18 @@ import analyticsRouter from './features/analytics/routes.js';
 import rateLimitMiddleware from './middleware/ratelimit.middleware.js';
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { config } from './infrastructure/config/index.js';
 
 
 const app = express();
 app.use(express.json());
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: config.app.frontendUrl,
     credentials: true,
   }));
+
+app.set("trust proxy", 1);
   
 app.use(cookieParser());
 app.use(pinoHttp({logger}));

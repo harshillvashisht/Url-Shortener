@@ -16,6 +16,7 @@ export const config = {
         port: env.PORT ,
         nodeEnv: env.NODE_ENV,
         baseUrl: env.BASE_URL,
+        frontendUrl: env.FRONTEND_URL,
     }
 } 
 

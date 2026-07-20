@@ -946,3 +946,59 @@ Testing:
 - No routing, hook, API, or business logic refactoring.
 - Used AI only for presentation improvements under strict constraints.
 - Avoided adding new UI dependencies.
+
+# Day 14 — Full-stack Dockerization and Nginx Architecture
+
+### Objective
+
+Dockerize the URL Shortener project, integrate PostgreSQL and Redis through Docker Compose, and establish a production-style two-Nginx architecture for local testing.
+
+### Completed Work
+
+* Created a multi-stage Dockerfile for the backend using Node.js 22 Alpine.
+* Added a .dockerignore file to optimize backend Docker builds.
+* Integrated PostgreSQL and Redis services through Docker Compose.
+* Added the backend service to docker-compose.yml and connected it to the Compose network.
+* Fixed the backend Docker CMD to use the correct compiled entry point (dist/server.js).
+* Generated the Prisma client inside the Docker build process.
+* Fixed Redis connection issues by configuring createClient({ url: env.REDIS_URL }).
+* Verified backend functionality, including authentication, link creation, redirect, and analytics inside Docker.
+* Created a frontend Dockerfile with a multi-stage build for the React/Vite application.
+* Added a frontend .dockerignore file.
+* Configured a frontend Nginx instance to serve React static files.
+* Created a dedicated main Nginx container to act as the public gateway.
+* Configured app.conf to route frontend requests to the frontend container and /api requests to the backend container.
+* Configured go.conf as a placeholder for future short-link domain routing.
+* Updated docker-compose.yml to include frontend, backend, PostgreSQL, Redis, and main Nginx services.
+* Changed Axios API_BASE_URL to /api/v1 for proxy-based API communication.
+* Added app.set("trust proxy", 1) in Express for accurate client IP detection behind Nginx.
+* Planned environment variable management using backend/.env.example and frontend/.env.example files.
+
+### Architecture Decisions
+
+* Adopted a two-Nginx architecture:
+
+  * Main Nginx handles public traffic, HTTPS, domain routing, and reverse proxying.
+  * Frontend Nginx serves the built React static files internally.
+* Chose separate subdomains for production:
+
+  * app.yourdomain.com for the dashboard/frontend.
+  * go.yourdomain.com for short-link redirects.
+* Decided not to fully test short-link redirects on localhost because localhost conflicts with React routes; redirects will be validated using the dedicated redirect subdomain during deployment.
+
+### Issues Encountered and Fixes
+
+* Backend container failed due to an incorrect CMD path; fixed by using dist/server.js.
+* DATABASE_URL validation failed when using localhost inside Docker; fixed by using the postgres service name.
+* Redis connection repeatedly failed because createClient() defaulted to localhost; fixed by passing env.REDIS_URL.
+* Nginx produced a conflicting localhost server name warning; identified as a non-critical local configuration issue.
+* Attempting to route short codes on localhost caused conflicts with React routes; reverted to the cleaner subdomain-based design.
+
+### Verification Results
+
+* Backend API successfully connected to PostgreSQL and Redis.
+* User registration and login worked correctly inside Docker.
+* Short-link creation and analytics recording worked correctly.
+* React frontend loaded through the main Nginx reverse proxy.
+* API requests successfully passed through the main Nginx to the backend.
+* Docker Compose networking between all containers was verified.

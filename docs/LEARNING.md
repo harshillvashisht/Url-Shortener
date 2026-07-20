@@ -867,3 +867,65 @@ The remaining phases are:
 - Deployment
 
 This reflects the typical progression of a real software project where implementation is followed by stabilization and release preparation.
+
+# 2026-07-20
+
+## Deploymennt phase
+
+### Key Concepts Learned
+
+#### Multi-stage Docker Builds
+
+* Learned how to separate the build stage from the production stage in a Dockerfile.
+* Understood that the build stage installs dependencies and compiles TypeScript/React code, while the production stage contains only the files needed to run the application.
+* Learned that multi-stage builds reduce final image size and improve deployment efficiency.
+
+#### .dockerignore
+
+* Learned that .dockerignore prevents unnecessary files such as node_modules, dist, .git, and .env from being copied into the Docker build context.
+* Understood that this speeds up Docker builds and avoids leaking sensitive files into images.
+
+#### Docker Compose Networking
+
+* Learned that Docker Compose automatically creates a default network for all services in the compose file.
+* Understood that containers can communicate using service names such as postgres, cache, backend, and frontend instead of localhost.
+* Learned why localhost inside a container refers to the container itself, not another service.
+
+#### Environment Variables in Docker Compose
+
+* Learned the difference between Docker Compose automatic .env loading and the env_file option for specific services.
+* Understood that the root .env file is used for variable substitution in docker-compose.yml, while backend/.env is injected into the backend container through env_file.
+
+#### Redis Configuration
+
+* Learned that createClient() defaults to redis://localhost:6379 if no URL is provided.
+* Understood the importance of explicitly passing env.REDIS_URL when running Redis inside Docker Compose.
+
+#### Prisma in Docker
+
+* Learned why npx prisma generate must run during the Docker build process so the Prisma client is available inside the container.
+* Understood that the prisma schema must be copied before running prisma generate.
+
+#### Nginx Reverse Proxy
+
+* Learned how Nginx can forward requests to different containers based on URL paths or domains.
+* Understood the role of proxy_pass in routing requests to backend and frontend services.
+* Learned how React Router requires try_files $uri /index.html to support page refreshes.
+
+#### Two-Nginx Architecture
+
+* Learned the difference between the main/public Nginx gateway and the internal frontend Nginx static-file server.
+* Understood why the frontend Nginx should only serve static files, while the main Nginx handles API routing and domain-based routing.
+
+#### trust proxy and Client IPs
+
+* Learned that Express receives the reverse proxy IP by default when behind Nginx.
+* Understood that app.set("trust proxy", 1) allows Express to use the X-Forwarded-For header and capture the real client IP for analytics.
+
+### Practical Lessons
+
+* Always commit after reaching a stable working checkpoint.
+* Test backend functionality inside Docker before adding additional infrastructure layers.
+* Keep environment variables configurable instead of hardcoding localhost values.
+* Separate frontend and redirect domains in production to avoid route conflicts.
+* Validate logs carefully, as the real error message often reveals the exact configuration problem.
