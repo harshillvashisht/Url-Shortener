@@ -1,4 +1,4 @@
-# URL Shortener v1
+# LinkForge v1
 
 [![Version](https://img.shields.io/badge/version-v1.0.0-blue)](https://github.com/harshillvashisht/Url-Shortener/releases/tag/v1.0.0)
 [![Frontend](https://img.shields.io/badge/frontend-live-success)](https://app.harshilldev.me)
