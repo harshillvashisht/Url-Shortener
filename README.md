@@ -1,5 +1,12 @@
 # URL Shortener v1
 
+[![Version](https://img.shields.io/badge/version-v1.0.0-blue)](https://github.com/harshillvashisht/Url-Shortener/releases/tag/v1.0.0)
+[![Frontend](https://img.shields.io/badge/frontend-live-success)](https://app.harshilldev.me)
+[![Short\_URLs](https://img.shields.io/badge/short%20urls-live-success)](https://go.harshilldev.me)
+
+
+
+
 A production-ready URL Shortener built with **Node.js, Express, PostgreSQL, Redis, React, and Docker**. This project allows authenticated users to create short links, track analytics, and manage their URLs through a secure dashboard.
 
 ## Live Demo
