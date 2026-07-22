@@ -65,6 +65,57 @@ Nginx Reverse Proxy (HTTPS)
            └── Redis
 ```
 
+## Folder Structure
+
+```text
+Url-Shortener/
+├── backend/
+│   ├── prisma/
+│   │   ├── migrations/
+│   │   └── schema.prisma
+│   ├── src/
+│   │   ├── features/
+│   │   │   ├── analytics/
+│   │   │   ├── auth/
+│   │   │   └── links/
+│   │   ├── infrastructure/
+│   │   │   ├── cache/
+│   │   │   ├── config/
+│   │   │   ├── database/
+│   │   │   └── logger/
+│   │   ├── middleware/
+│   │   ├── shared/
+│   │   ├── app.ts
+│   │   └── server.ts
+│   ├── Dockerfile
+│   └── package.json
+├── frontend/
+│   ├── src/
+│   │   ├── api/
+│   │   ├── components/
+│   │   │   ├── auth/
+│   │   │   ├── common/
+│   │   │   └── links/
+│   │   ├── contexts/
+│   │   ├── hooks/
+│   │   ├── pages/
+│   │   ├── types/
+│   │   └── config.ts
+│   ├── Dockerfile
+│   └── package.json
+├── nginx/
+│   ├── conf.d/
+│   │   ├── app.conf
+│   │   └── go.conf
+│   ├── Dockerfile
+│   └── nginx.conf
+├── docs/
+│   └── ScreenShots/
+├── docker-compose.yml
+└── README.md
+```
+
+
 ## Screenshots
 
 ### Authentication
