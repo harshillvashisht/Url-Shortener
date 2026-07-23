@@ -155,8 +155,8 @@ Url-Shortener/
 ## Local Development
 
 ```bash
-git clone https://github.com/harshillvashisht/url-shortener.git
-cd url-shortener
+git clone https://github.com/harshillvashisht/LinkForge.git
+cd LinkForge
 docker-compose up --build
 ```
 
