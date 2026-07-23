@@ -1,6 +1,6 @@
 # LinkForge v1
 
-[![Version](https://img.shields.io/badge/version-v1.0.0-blue)](https://github.com/harshillvashisht/Url-Shortener/releases/tag/v1.0.0)
+[![Version](https://img.shields.io/badge/version-v1.0.0-blue)](https://github.com/harshillvashisht/LinkForge/releases/tag/v1.0.0)
 [![Frontend](https://img.shields.io/badge/frontend-live-success)](https://app.harshilldev.me)
 [![Short\_URLs](https://img.shields.io/badge/short%20urls-live-success)](https://go.harshilldev.me)
 
@@ -68,7 +68,7 @@ Nginx Reverse Proxy (HTTPS)
 ## Folder Structure
 
 ```text
-Url-Shortener/
+LinkForge/
 ├── backend/
 │   ├── prisma/
 │   │   ├── migrations/
